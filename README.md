@@ -1,23 +1,92 @@
-# Python Hello
+# AI Inventory Agent
 
-The most basic boilerplate to start a Python project at 4Geeks is to start your very first Python project from scratch.
+Agente de IA por terminal para Carla, dueña de una tienda de suministros para cafeterías. Permite consultar y actualizar el inventario mediante una conversación en español.
 
-## What to do next?
+## Estructura del proyecto
 
-Open the `main.py` file and start writing your code.
+- `api/app.py`: API REST con FastAPI.
+- `agent.py`: agente en Python que usa Groq y llama a la API mediante tools.
+- `products.csv`: almacenamiento del inventario.
+- `conversation_log.csv`: registro de eventos de conversación.
+- `.env.example`: ejemplo de las variables de entorno necesarias.
 
-Execute your code by typing the following command on your terminal:
+## Instalación
+
+1. Instala las dependencias:
+
+   ```bash
+   uv sync
+   ```
+
+2. Copia `.env.example` a `.env` y añade tu clave de Groq en `GROQ_API_KEY`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Variables de entorno:
+
+   - `GROQ_API_KEY`: clave de API de Groq.
+   - `GROQ_MODEL`: modelo de Groq que usará el agente.
+   - `GROQ_TEMPERATURE`: temperatura de generación; por defecto, `0.2`.
+   - `GROQ_MAX_TOKENS`: máximo de tokens de salida; por defecto, `400`.
+
+## Cómo arrancar
+
+Se necesitan **dos terminales**. Arranca primero la API y luego el agente.
+
+**Terminal 1 — API:**
 
 ```bash
-$ python main.py
+uv run uvicorn api.app:app --reload
 ```
 
-You can create and include as many python files (a.k.a. modules) as you want using the import statements.
+**Terminal 2 — agente:**
 
-## Requirements
+```bash
+uv run python agent.py
+```
 
-Make sure you have Python installed in your computer. We strongly recommend [installing Python through Pyenv ](https://4geeks.com/how-to/what-is-pyenv-and-how-to-install-pyenv) to avoid version conflicts in the future.
+## Cómo detenerlo
 
-### Contributors
+Escribe `salir` para cerrar el agente, o pulsa `Ctrl+C`. Si detienes los procesos manualmente, detén primero el agente y después la API.
 
-This template was built as part of the [4Geeks Python Resources](https://4geeks.com/technology/python) for learning at [4Geeks.com](https://4geeks.com) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and [many other contributors](https://github.com/4GeeksAcademy/python-hello/graphs/contributors).
+## Endpoints de la API
+
+| Método | Ruta | Qué hace |
+|---|---|---|
+| `GET` | `/inventory` | Consulta el inventario completo. |
+| `POST` | `/inventory` | Crea un producto. |
+| `PATCH` | `/inventory/{product_id}` | Actualiza el stock del producto indicado. |
+| `GET` | `/inventory/alerts?threshold=10` | Consulta los productos con stock inferior al umbral. |
+
+## Tools del agente
+
+| Nombre | Endpoint que usa |
+|---|---|
+| `get_inventory` | `GET /inventory` |
+| `add_product` | `POST /inventory` |
+| `update_stock` | `PATCH /inventory/{product_id}` |
+| `get_low_stock_alerts` | `GET /inventory/alerts?threshold=...` |
+
+## Ejemplo de conversación
+
+```text
+Tú: acaban de llegar 30 litros de leche de avena
+Agente: Listo, se añadieron 30 litros a Leche de avena. Ahora tienes 38 litros en stock.
+
+Tú: vendimos 12 bolsas de arábica hoy
+Agente: Se registró la venta de 12 bolsas de Café arábica. Quedan 13 bolsas en stock.
+
+Tú: ¿qué productos están por agotarse?
+Agente: - Azúcar: 5 kg
+```
+
+## Registro de conversación
+
+`conversation_log.csv` contiene las columnas `actor`, `message`, `tool_call` y `timestamp`. El registro es solo de adición: nunca se sobrescribe; los eventos nuevos se agregan al final.
+
+## Notas
+
+- No se usa ningún framework de agentes. El agente implementa manualmente el bucle **Observar → Pensar → Actuar → Actualizar → Repetir**.
+- El agente solo responde sobre temas del inventario de la tienda.
