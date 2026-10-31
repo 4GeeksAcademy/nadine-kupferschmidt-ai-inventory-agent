@@ -1,0 +1,48 @@
+actor,message,tool_call,timestamp
+user,acaban de llegar 30 litros de leche de avena,,2026-10-31T04:54:08.113013
+user,acaban de llegar 30 litros de leche de avena,,2026-10-31T04:55:39.504311
+user,acaban de llegar 30 litros de leche de avena,,2026-10-31T05:00:09.469590
+agent,{},get_inventory,2026-10-31T05:00:10.395625
+tool,"{""ok"": false, ""error"": ""No se pudo conectar con la API. Arráncala con: uv run uvicorn api.app:app --reload""}",get_inventory,2026-10-31T05:00:10.397843
+agent,{},get_inventory,2026-10-31T05:00:10.790591
+tool,"{""ok"": false, ""error"": ""No se pudo conectar con la API. Arráncala con: uv run uvicorn api.app:app --reload""}",get_inventory,2026-10-31T05:00:10.791889
+agent,"¿Ya tienes registrado “leche de avena” en el inventario? Si no, ¿quieres crear el producto con una cantidad inicial de 30 litros?",,2026-10-31T05:00:11.322554
+user,acaban de llegar 30 litros de leche de avena,,2026-10-31T05:01:53.137610
+agent,{},get_inventory,2026-10-31T05:01:53.619746
+tool,"{""ok"": true, ""data"": [{""id"": 1, ""name"": ""Leche de avena"", ""quantity"": 8, ""unit"": ""litros""}, {""id"": 2, ""name"": ""Café arábica"", ""quantity"": 25, ""unit"": ""bolsas""}, {""id"": 3, ""name"": ""Vasos de cartón"", ""quantity"": 200, ""unit"": ""unidades""}, {""id"": 4, ""name"": ""Azúcar"", ""quantity"": 5, ""unit"": ""kg""}, {""id"": 5, ""name"": ""Sirope de vainilla"", ""quantity"": 12, ""unit"": ""botellas""}]}",get_inventory,2026-10-31T05:01:53.648114
+agent,"{""delta"": 30, ""product_id"": 1}",update_stock,2026-10-31T05:01:54.762424
+tool,"{""ok"": true, ""data"": {""id"": 1, ""name"": ""Leche de avena"", ""quantity"": 38, ""unit"": ""litros""}}",update_stock,2026-10-31T05:01:54.766645
+agent,"Listo, se añadieron 30 litros a **Leche de avena**. Ahora tienes 38 litros en stock.",,2026-10-31T05:01:55.212394
+user,vendimos 12 bolsas de arábica hoy,,2026-10-31T05:02:13.689309
+agent,{},get_inventory,2026-10-31T05:02:14.342210
+tool,"{""ok"": true, ""data"": [{""id"": 1, ""name"": ""Leche de avena"", ""quantity"": 38, ""unit"": ""litros""}, {""id"": 2, ""name"": ""Café arábica"", ""quantity"": 25, ""unit"": ""bolsas""}, {""id"": 3, ""name"": ""Vasos de cartón"", ""quantity"": 200, ""unit"": ""unidades""}, {""id"": 4, ""name"": ""Azúcar"", ""quantity"": 5, ""unit"": ""kg""}, {""id"": 5, ""name"": ""Sirope de vainilla"", ""quantity"": 12, ""unit"": ""botellas""}]}",get_inventory,2026-10-31T05:02:14.345372
+agent,"{""delta"": -12, ""product_id"": 2}",update_stock,2026-10-31T05:02:14.831592
+tool,"{""ok"": true, ""data"": {""id"": 2, ""name"": ""Café arábica"", ""quantity"": 13, ""unit"": ""bolsas""}}",update_stock,2026-10-31T05:02:14.835362
+agent,Se registró la venta de 12 bolsas de **Café arábica**. Quedan 13 bolsas en stock.,,2026-10-31T05:02:15.140099
+user,¿qué productos están por agotarse?,,2026-10-31T05:02:25.775505
+agent,{},get_low_stock_alerts,2026-10-31T05:02:26.056120
+tool,"{""ok"": true, ""data"": [{""id"": 4, ""name"": ""Azúcar"", ""quantity"": 5, ""unit"": ""kg""}]}",get_low_stock_alerts,2026-10-31T05:02:26.078035
+agent,"Los productos con stock bajo (menos de 10 unidades) son:
+
+- **Azúcar** – 5 kg
+
+Puedes reponerlo cuando quieras.",,2026-10-31T05:02:26.530421
+user,"agregá un producto nuevo: canela molida, 3 kg. Después decime qué está por agotarse",,2026-10-31T05:02:46.936362
+agent,"{""name"": ""Canela molida"", ""quantity"": 3, ""unit"": ""kg""}",add_product,2026-10-31T05:02:47.335581
+tool,"{""ok"": true, ""data"": {""id"": 6, ""name"": ""Canela molida"", ""quantity"": 3, ""unit"": ""kg""}}",add_product,2026-10-31T05:02:47.339378
+agent,{},get_low_stock_alerts,2026-10-31T05:02:47.804590
+tool,"{""ok"": true, ""data"": [{""id"": 4, ""name"": ""Azúcar"", ""quantity"": 5, ""unit"": ""kg""}, {""id"": 6, ""name"": ""Canela molida"", ""quantity"": 3, ""unit"": ""kg""}]}",get_low_stock_alerts,2026-10-31T05:02:47.808920
+agent,"Producto creado:
+
+- **Canela molida** – 3 kg
+
+Productos con stock bajo (menos de 10 unidades):
+
+- **Azíaz** (¡toma un torto ) ? ...?
+
+Parece que hubo un pequeño error de formato. Los productos con stock bajo son:
+
+- **Azúcar** – 5 kg  
+- **Canela molida** – 3 kg  
+
+Ambos están por debajo del umbral de 10 unidades. Puedes reponerlos cuando quieras.",,2026-10-31T05:02:48.461469
