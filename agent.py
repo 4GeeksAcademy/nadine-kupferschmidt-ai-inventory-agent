@@ -10,6 +10,8 @@ from openai import OpenAI
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+TEMPERATURE = float(os.getenv("GROQ_TEMPERATURE", "0.2"))
+MAX_TOKENS = int(os.getenv("GROQ_MAX_TOKENS", "400"))
 API_BASE_URL = "http://127.0.0.1:8000"
 API_START_COMMAND = "uv run uvicorn api.app:app --reload"
 LOG_FILE = Path(__file__).resolve().parent / "conversation_log.csv"
@@ -89,7 +91,14 @@ TOOLS = [
 
 SYSTEM_MESSAGE = (
     "Eres el asistente de inventario de Carla, dueña de una tienda de suministros para cafeterías. "
-    "Responde breve y en español. Si el usuario nombra un producto, primero usa get_inventory para "
+    "Responde breve y en español. Responde en texto plano, sin markdown (no uses asteriscos ni "
+    "negritas), porque las respuestas se muestran en una terminal. Para listas usa un guion al "
+    "inicio de cada línea. Solo puedes ayudar con consultar productos, registrar entregas, "
+    "registrar ventas, crear productos y revisar alertas de stock bajo. Si te preguntan cualquier "
+    "otra cosa, no la respondas; contesta amablemente: 'Solo puedo ayudarte con el inventario de "
+    "la tienda: consultar productos, registrar entregas o ventas, crear productos y ver alertas "
+    "de stock bajo.' Puedes responder brevemente a saludos y agradecimientos. Si el usuario nombra "
+    "un producto, primero usa get_inventory para "
     "encontrar su id. Si el producto no existe, pregúntale si quiere crearlo antes de hacerlo. "
     "Para entregas y reposiciones aumenta el stock; para ventas y salidas redúcelo."
 )
@@ -171,6 +180,8 @@ def run_agent_turn(client: OpenAI, history: list[dict], user_message: str) -> st
             messages=history,
             tools=TOOLS,
             tool_choice="auto",
+            temperature=TEMPERATURE,
+            max_tokens=MAX_TOKENS,
         )
         assistant_message = completion.choices[0].message
         tool_calls = assistant_message.tool_calls or []
