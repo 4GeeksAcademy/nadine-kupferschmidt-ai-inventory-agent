@@ -1,0 +1,22 @@
+[project]
+name = "nadine-kupferschmidt-python-hello"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "nanikuper-prog", email = "nanikuper@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.162.0",
+    "openai>=3.42.0",
+    "python-dotenv>=1.2.4",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+nadine-kupferschmidt-python-hello = "nadine_kupferschmidt_python_hello:main"
+
+[build-system]
+requires = ["uv_build>=0.13.6,<0.14.0"]
+build-backend = "uv_build"
